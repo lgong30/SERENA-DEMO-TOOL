@@ -2,13 +2,13 @@
 try:
     from jinja2 import Environment, FileSystemLoader
 except ImportError as msg:
-    print "ImportError: ", msg
+    print ("ImportError: %s" % msg)
     exit(1)
 import os
 try:
     import numpy as np
 except ImportError as msg:
-    print "ImportError: ", msg
+    print ("ImportError: %s" % msg)
     exit(1)
 import argparse
 import sys
@@ -28,7 +28,7 @@ def get_opt():
 
     try:
         args = parser.parse_args(sys.argv[1::])
-    except IOError, msg:
+    except IOError as msg:
         parser.error(str(msg))
         exit(1)
     return args
@@ -62,7 +62,7 @@ def gen_random_matching(N, min_weight=1, max_weight=50, check_file=None):
         w = weights[i]
         e = (str(i + 1), str(o + 1))
         if e in cons_matching:
-            print "$ same edge: ", e, " use previous weight"
+            # print ("$ same edge: %s use previous weight"
             w = cons_matching[e]
         matching.append({'i': i + 1, 'o': o + 1, 'w': w })
     return matching
