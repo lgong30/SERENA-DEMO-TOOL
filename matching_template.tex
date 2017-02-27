@@ -1,0 +1,79 @@
+% Template for bipartite weighted matching
+% Author: Long Gong
+\documentclass[border=2pt]{standalone}
+%%%<
+\usepackage{verbatim}
+%%%>
+\begin{comment}
+:Title: Template for bipartite weighted matching
+:Author: Long Gong
+
+A template for bipartite weighted matching. 
+
+In some ways, this TeX script works as the "model" of our application 
+for visualizing a weighted bipartite matching. 
+
+
+Programmed in TikZ by Long Gong. Templating language is Jinja2, 
+templaing syntax is the default setting of Jinja2.
+\end{comment}
+
+
+\usepackage{tikz}
+\usetikzlibrary{calc,positioning}
+
+\begin{document}
+\begin{tikzpicture}[
+vertex/.style={circle, draw, inner sep=4pt, thick},
+edge/.style={thick},
+weight/.style={rectangle, draw, inner sep=2pt, minimum width=20pt},
+info/.style={draw=none,fill=none,inner sep=0pt}]
+
+%% local variables
+\def \margin{48pt}
+\def \hm {100pt}
+\def \vm {20pt}
+\def \NUMOFVERTICES {{ '{' }}{{ N }}{{ '}' }} 
+
+%% place all input vertices
+\foreach \s in {1,...,\NUMOFVERTICES}
+      \node[vertex,label=left:$\s$] (I-\s) at (0,{- (\s - 1) * \vm}) {};
+
+%% place all output vertices
+\foreach \s in {1,...,\NUMOFVERTICES}
+      \node[vertex,label=right:$\s$] (O-\s) at (\hm,{- (\s - 1) * \vm}) {};
+
+\node[info] (I) at (0,{- (\NUMOFVERTICES - 1) * \vm}) {};
+\node[info] (O) at (\hm,{- (\NUMOFVERTICES - 1) * \vm}) {};
+
+%% place other ifnormation
+\node[info] (in) at (0,\vm) {\bf Input};
+\node[info] (out) at (\hm, \vm){\bf Output};
+{% if position == 0 %}
+\node[info] (weight) at ({-\margin}, \vm) {\bf Weight};
+{% else %}
+\node[info] (weight) at ({\hm+\margin}, \vm) {\bf Weight};
+{% endif %}
+
+%% matching information
+% ==========================================
+{% for m in matching %}
+% {{ m.i }} {{ m.o }} {{ m.w }}
+{% endfor %}
+% ==========================================
+
+%% place all weight right of output vertices
+{% for m in matching %}
+{% if position == 0 %}
+\node[weight] (W-{{ m.i }}) at ({{ '{' }}-\margin{{ '}' }},{{ '{' }}- ({{ m.i - 1}}) * \vm{{ '}' }}) {{ '{$' }}{{ m.w }}{{ '$}' }};
+{% else %}
+\node[weight] (W-{{ m.i }}) at ({{ '{' }}\hm+\margin{{ '}' }},{{ '{' }}- ({{ m.i - 1}}) * \vm{{ '}' }}) {{ '{$' }}{{ m.w }}{{ '$}' }};
+{% endif %}
+{% endfor %}
+
+%% place all edges
+\foreach \i/\o in {{ '{' }}{% for m in matching %}{% if loop.index > 1 %}, {% endif %}{{ m.i }}{{ '/' }}{{ m.o }}{% endfor %}{{ '}' }}
+      \draw[edge] (I-\i) -- (O-\o);
+
+\end{tikzpicture}
+\end{document}
