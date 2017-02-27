@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{lipsum}
+\usepackage[top=1in, bottom=1.25in, left=1.25in, right=1.25in]{geometry}
+\title{HW}
+\author{author}
+
+\begin{document}
+\maketitle
+
+
+\lipsum
+\begin{figure*}[!htb]
+\centering
+\begin{minipage}{.48\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{arrival_matching}
+\caption{Arrival matching.}
+\end{minipage}%
+\hspace{.03\textwidth}
+\begin{minipage}{.48\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{previous_matching}
+\caption{Previous matching.}
+\end{minipage}
+\end{figure*}
+
+\end{document}

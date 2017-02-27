@@ -54,28 +54,28 @@ info/.style={draw=none,fill=none,inner sep=0pt}]
 
 %% matching information
 % ==========================================
-% 1 6 13
-% 2 7 36
-% 3 1 28
-% 4 2 85
-% 5 8 10
-% 6 3 25
-% 7 4 53
-% 8 5 55
+% 1 4 46
+% 2 6 31
+% 3 2 47
+% 4 3 19
+% 5 8 13
+% 6 7 25
+% 7 1 22
+% 8 5 27
 % ==========================================
 
 %% place all weight right of output vertices
-\node[weight] (W-1) at ({-\margin},{- (0) * \vm}) {$13$};
-\node[weight] (W-2) at ({-\margin},{- (1) * \vm}) {$36$};
-\node[weight] (W-3) at ({-\margin},{- (2) * \vm}) {$28$};
-\node[weight] (W-4) at ({-\margin},{- (3) * \vm}) {$85$};
-\node[weight] (W-5) at ({-\margin},{- (4) * \vm}) {$10$};
+\node[weight] (W-1) at ({-\margin},{- (0) * \vm}) {$46$};
+\node[weight] (W-2) at ({-\margin},{- (1) * \vm}) {$31$};
+\node[weight] (W-3) at ({-\margin},{- (2) * \vm}) {$47$};
+\node[weight] (W-4) at ({-\margin},{- (3) * \vm}) {$19$};
+\node[weight] (W-5) at ({-\margin},{- (4) * \vm}) {$13$};
 \node[weight] (W-6) at ({-\margin},{- (5) * \vm}) {$25$};
-\node[weight] (W-7) at ({-\margin},{- (6) * \vm}) {$53$};
-\node[weight] (W-8) at ({-\margin},{- (7) * \vm}) {$55$};
+\node[weight] (W-7) at ({-\margin},{- (6) * \vm}) {$22$};
+\node[weight] (W-8) at ({-\margin},{- (7) * \vm}) {$27$};
 
 %% place all edges
-\foreach \i/\o in {1/6, 2/7, 3/1, 4/2, 5/8, 6/3, 7/4, 8/5}
+\foreach \i/\o in {1/4, 2/6, 3/2, 4/3, 5/8, 6/7, 7/1, 8/5}
       \draw[edge] (I-\i) -- (O-\o);
 
 \end{tikzpicture}
