@@ -1,0 +1,262 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""This module is for management of the auto-matching application."""
+
+
+_IMPORT_ERROR_MSG = u"{0} was not detected, please run \
+'pip install {0}' to install it."
+
+try:
+    from flask_script import Command
+    from flask_script import Manager
+    from flask_script import Server
+    from flask_script import Option
+    from flask_script import prompt_bool
+    from flask_script import prompt_pass
+except ImportError as msg:
+    print (_IMPORT_ERROR_MSG.format("flask_script"))
+    exit(1)
+
+try:
+    from flask import Flask
+except ImportError as msg:
+    print (_IMPORT_ERROR_MSG.format("flask"))
+    exit(1)
+
+from auto_matching import get_tex_doc, gen_random_matching, gen_tex_file, auto_extract_bwm, to_tuple
+from pdf_builder import PDFBuilder
+from merge import simple_merge
+import os
+import time
+
+
+def make_files(matchings, output_dir):
+    """Writing matchings into files"""
+    overwrite_handler = lambda filename: prompt_bool("{} already exists."
+                                                     " Do you really want to overwrite it?".format(filename))
+    tex_file_list = []
+    for m in matchings:
+        tex_doc = get_tex_doc(m[0])
+        counter = 0
+        while not (gen_tex_file(tex_doc, filename=os.path.join(output_dir, m[1] + '.tex'),
+                                overwrite_handler=overwrite_handler)):
+            if counter > 10:
+                print("Failed to create file for matching %s." % (str(m[0])))
+                return
+            m[1] += time.strftime("_%H-%M-%S")
+            counter += 1
+        tex_file_list.append(m[1])
+        print("Successfully create tex file {}".format(m[1]))
+
+    pdf_builder = PDFBuilder(tex_file_list=tex_file_list, tex_dir=output_dir)
+    pdf_builder.make_pdfs()
+    pdf_builder.clean()
+
+
+class GenerateMatchings(Command):
+    """Generate matchings"""
+    DEFAULT_SIZE = 8
+    DEFAULT_POSITION = (0, "left")
+    DEFAULT_WEIGHT_RANGE = (0, 100)
+    option_list = (
+        Option(u'--position', u'-u', action="store", dest=u'position',
+               help=u"OPTIONAL: weight position\n"
+               u"Default: {}, i.e., {}.".format(*DEFAULT_POSITION),
+               type=int, default=DEFAULT_POSITION[0]),
+        Option(u"--size", u'-s', action="store", dest=u'size',
+               help=u"OPTIONAL: matching size\n"
+               u"Default: {}.".format(DEFAULT_SIZE), type=int, default=DEFAULT_SIZE),
+        Option(u"--minWeight", u'-w', action="store", dest=u"min_weight",
+               help=u"OPTIONAL: minimum weight on each edge\n"
+               u"Default: {}.".format(DEFAULT_WEIGHT_RANGE[0]),
+               type=int, default=DEFAULT_WEIGHT_RANGE[0]),
+        Option(u"--maxWeight", u'-W', action="store", dest=u"max_weight",
+               help=u"OPTIONAL: maximum weight on each edge\n"
+                    u"Default: {}.".format(DEFAULT_WEIGHT_RANGE[1]),
+               type=int, default=DEFAULT_WEIGHT_RANGE[1]),
+        Option(
+            u"--SolveIt", u"-S", action="store", dest=u"solve_it",
+            help=u"OPTIONAL: Merge the two matchings with certain default choice when tie occurs\n"
+            u"\tN: do not solve\n\tR: solve with default choice R\n\tS: solve with default choice S\n"
+            u"Default: N.",
+            default=u'N', choices=['N', 'R', 'S']),
+        Option(
+            u"--output-dir", u"-o", action="store", dest=u"output_dir",
+            help=u"Output directory", type=str, required=True)
+    )
+
+    def __init__(self):
+        super(GenerateMatchings, self).__init__()
+
+    def run(self, position, size, min_weight, max_weight, solve_it, output_dir):
+        """Generate matchings"""
+        output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
+        r = gen_random_matching(size,
+                                min_weight=min_weight,
+                                max_weight=max_weight,
+                                consistent_with=None)
+        const_matching = {}
+        for edge in r:
+            const_matching[(str(edge['i']), str(edge['o']))] = edge['w']
+
+        s = gen_random_matching(size,
+                                min_weight=min_weight,
+                                max_weight=max_weight,
+                                consistent_with=const_matching)
+
+        make_files([[r, "arrival_matching"],
+                    [s, "previous_matching"]],
+                   output_dir)
+
+        if solve_it != 'N':
+            print("Merging ...")
+            M, W = simple_merge(to_tuple(r), to_tuple(s), default={"R": 0, "S": 1}[solve_it])
+            merged = []
+            for i, o in enumerate(M):
+                merged.append(dict(zip(["i", "o", "w"],
+                                       [i, o, W[i]])))
+            make_files([merged, "merged_matching"], output_dir)
+
+
+
+        # overwrite_handler = lambda filename: prompt_bool("{} already exists."
+        #                                                         " Do you really want to overwrite it?".format(filename))
+        # tex_file_list = []
+        # for m in [[r, "arrival_matching"], [s, "previous_matching"]]:
+        #     tex_doc = get_tex_doc(m[0])
+        #     counter = 0
+        #     while not (gen_tex_file(tex_doc, filename=os.path.join(output_dir, m[1]+'.tex'))):
+        #         if counter > 10:
+        #             print("Failed to create file for matching %s." % (str(m[0])))
+        #             return
+        #         m[1] += time.strftime("_%H-%M-%S")
+        #         counter += 1
+        #     tex_file_list.append(m[1])
+        #     print("Successfully create tex file {}".format(m[1]))
+        #
+        # pdf_builder = PDFBuilder(tex_file_list=tex_file_list, tex_dir=output_dir)
+        # pdf_builder.make_pdfs()
+        # pdf_builder.clean()
+
+
+class GenerateMatchingsFromTxt(Command):
+    """Generate matchings from a TXT file"""
+    option_list = (
+        Option(u'--file', u'-f', dest=u'file_path', required=True,
+               help=u'Path to the TXT file to process'),
+        Option(
+            u"--SolveIt", u"-S", action="store", dest=u"solve_it",
+            help=u"OPTIONAL: Merge the two matchings with certain default choice when tie occurs\n"
+                 u"\tN: do not solve\n\tR: solve with default choice R\n\tS: solve with default choice S\n"
+                 u"Default: N.",
+            default=u'N', choices=['N', 'R', 'S']),
+        Option(u"--output-dir", u"-o", action="store", dest=u"output_dir",
+              help=u"Output directory", type=str, required=True)
+    )
+
+    def __init__(self):
+        super(GenerateMatchingsFromTxt, self).__init__()
+
+    def run(self, file_path, solve_it, output_dir):
+        """Generate Matchings from TXT file
+        Example TXT (lines start with '#' are comments,
+        lines start with '%' are data):
+
+        # R matching
+        # endpoint-1 endpoint-2 weight
+        % 1 2 8
+        % 2 1 10
+
+        # S matching
+        # endpoint-1 endpoint-2 weight
+        % 1 2 8
+        % 2 1 10
+        """
+        def get(filename):
+            import re
+            p = re.compile(r"^%\s(\d+)\s(\d+)\s(\d+)")
+            R = []
+            S = []
+            mem = {}
+            with open(filename, 'r') as fp:
+                for line in fp:
+                    e = re.findall(p, line)
+                    if len(e) > 0:
+                        i, o, w = e[0]
+                        if i in mem:
+                            if mem[i][0] == o and (not mem[i][1] == w):
+                                print("The two matchings are not consistent (not from the same graph).")
+                                exit(1)
+                            S.append(dict(zip(['i', 'o', 'w'],
+                                          [int(x) for x in [i, o, w]])))
+                        else:
+                            mem[i] = (o, w)
+                        R.append(dict(zip(['i', 'o', 'w'],
+                                          [int(x) for x in [i, o, w]])))
+            return R, S
+        file_path = unicode(file_path.decode(encoding=u'utf-8'))
+        output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
+        R, S = get(file_path)
+        make_files([[R, "arrival_matching"],
+                    [S, "previous_matching"]],
+                   output_dir)
+
+        if solve_it != 'N':
+            print("Merging ...")
+            # convert
+
+            M, W = simple_merge(to_tuple(R), to_tuple(S), default={"R": 0, "S": 1}[solve_it])
+            merged = []
+            for i, o in enumerate(M):
+                merged.append(dict(zip(["i", "o", "w"],
+                                       [i, o, W[i]])))
+            make_files([merged, "merged_matching"], output_dir)
+
+
+
+class Merge(Command):
+    """Merge Two Matchings"""
+
+    option_list = (
+        Option(u'-R', dest=u'Rfile', action="store",
+               required=True, help=u"tex file for Matching 1"),
+        Option(u'-S', dest=u'Sfile', action="store",
+               required=True, help=u"tex file for Matching 2"),
+        Option(u'--default', dest=u'default', action="store",
+               help=u"OPTIONAL: default choice when tie occurs\n"
+               u"Default: R",
+               default=u'R', choices=['R', 'S']),
+        Option(
+            u"--output-dir", u"-o", action="store", dest=u"output_dir",
+            help=u"OPTIONAL: Output directory\n"
+            "Default: current directory", type=str, default=os.getcwd())
+
+    )
+
+    def __init__(self):
+        super(Merge, self).__init__()
+
+    def run(self, Rfile, Sfile, default, output_dir):
+        """Merge R & S"""
+        R = auto_extract_bwm(Rfile)
+        S = auto_extract_bwm(Sfile)
+
+        M, W = simple_merge(R, S, default={"R": 0, "S": 1}[default])
+        merged = []
+        for i, o in enumerate(M):
+            merged.append(dict(zip(["i", "o", "w"],
+                                   [i, o, W[i]])))
+        make_files([merged, "merged_matching"], output_dir)
+
+
+if __name__ == "__main__":
+    app = Flask(__name__)
+    shell_manager = Manager(app)
+    shell_manager.add_command(u"gen_matchings", GenerateMatchings())
+    shell_manager.add_command(u"gen_matchings_from_txt", GenerateMatchingsFromTxt())
+    shell_manager.add_command(u"merge_two_matchings", Merge())
+
+    shell_manager.run()
+
+
+
