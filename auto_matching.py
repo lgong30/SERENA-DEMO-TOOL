@@ -100,16 +100,19 @@ def to_tuple(matching):
     
 # Capture our current directory
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_TEMPLATE = u'matching_template.tex'
 
 
 def get_tex_doc(matching, **options):
     """Generate tex code for a matching"""
-    # Notice the use of trim_blocks, which greatly helps control whitespace.
-    j2_env = Environment(loader=FileSystemLoader(THIS_DIR),
+
+    template_dir = options.get("template_dir", THIS_DIR)
+    template_filename = options.get("template", DEFAULT_TEMPLATE)
+    j2_env = Environment(loader=FileSystemLoader(template_dir),
                          trim_blocks=True)
     args = {'N': len(matching), 'matching': matching}
-    args.update(options)
-    return j2_env.get_template('matching_template.tex').render(
+    args['position'] = options.get('position', 0)
+    return j2_env.get_template(template_filename).render(
         args
     )
 

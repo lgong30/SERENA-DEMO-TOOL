@@ -23,43 +23,77 @@ except ImportError as msg:
     print (_IMPORT_ERROR_MSG.format("flask"))
     exit(1)
 
-from auto_matching import get_tex_doc, gen_random_matching, gen_tex_file, auto_extract_bwm, to_tuple
+from auto_matching import gen_random_matching, auto_extract_bwm, to_tuple
 from pdf_builder import PDFBuilder
-from merge import simple_merge
+from tex_builder import MatchingTeXBuilder, CycleTeXBuilder
+from merge import simple_merge, format_cycle
+from auto_cycle import make_tex_doc
 import os
-import time
+import sys
+
+OVERWRITE_HANDLER = lambda filename: prompt_bool("{} already exists."
+                                                 " Do you really want to overwrite it?".format(filename))
 
 
-def make_files(matchings, output_dir):
-    """Writing matchings into files"""
-    overwrite_handler = lambda filename: prompt_bool("{} already exists."
-                                                     " Do you really want to overwrite it?".format(filename))
-    tex_file_list = []
-    for m in matchings:
-        tex_doc = get_tex_doc(m[0])
-        counter = 0
-        while not (gen_tex_file(tex_doc, filename=os.path.join(output_dir, m[1] + '.tex'),
-                                overwrite_handler=overwrite_handler)):
-            if counter > 10:
-                print("Failed to create file for matching %s." % (str(m[0])))
-                return
-            m[1] += time.strftime("_%H-%M-%S")
-            counter += 1
-        tex_file_list.append(m[1])
-        print("Successfully create tex file {}".format(m[1]))
+def make_pdf(tex_file_list, tex_dir, pdf_dir=None):
+    if not (pdf_dir is None):
+        pdf_builder = PDFBuilder(tex_file_list=tex_file_list, tex_dir=tex_dir, output_dir=pdf_dir)
+    else:
+        pdf_builder = PDFBuilder(tex_file_list=tex_file_list, tex_dir=tex_dir)
 
-    pdf_builder = PDFBuilder(tex_file_list=tex_file_list, tex_dir=output_dir)
     pdf_builder.make_pdfs()
     pdf_builder.clean()
 
 
+def make_files_for_matchings(matchings, output_dir, **tex_options):
+    """Writing matchings into files"""
+    tex_builder = MatchingTeXBuilder(matchings, output_dir=output_dir, **tex_options)
+    tex_file_list = tex_builder.make_tex(overwrite_handler=OVERWRITE_HANDLER)
+
+    make_pdf(tex_file_list=tex_file_list, tex_dir=output_dir)
+
+
+def make_files_for_cycles(cycles, output_dir):
+    """Writing cycles into files"""
+    formatted_cycles = []
+    for i, c in enumerate(cycles):
+        formatted_cycles.append(
+            [format_cycle(c), "cycle-{}".format(i + 1)]
+        )
+    tex_builder = CycleTeXBuilder(formatted_cycles, output_dir=output_dir)
+    tex_file_list = tex_builder.make_tex(overwrite_handler=OVERWRITE_HANDLER)
+
+    make_pdf(tex_file_list=tex_file_list, tex_dir=output_dir)
+
+
+def solve_merge(R, S, default):
+    print("Merging ...")
+    # convert
+
+    M, W, cycles = simple_merge(to_tuple(R), to_tuple(S),
+                        default={"R": 0, "S": 1}[default],
+                        return_cycles=True)
+    merged = []
+    for i, o in enumerate(M):
+        merged.append(dict(zip(["i", "o", "w"],
+                               [i, o, W[i]])))
+    # here, the first argument MUST be a 2d list
+    return merged, cycles
+
+
 class GenerateMatchings(Command):
-    """Generate matchings"""
+    """Generate (random) matchings"""
     DEFAULT_SIZE = 8
     DEFAULT_POSITION = (0, "left")
     DEFAULT_WEIGHT_RANGE = (0, 100)
+    POSITION_CHOICES = 2
+    S_MIN = 4
+    S_MAX = 1024
+    W_MIN = 0
+    W_MAX = sys.maxint
     option_list = (
-        Option(u'--position', u'-u', action="store", dest=u'position',
+        Option(u'--position', u'-p', action="store", dest=u'position',
+               choices=range(POSITION_CHOICES),
                help=u"OPTIONAL: weight position\n"
                u"Default: {}, i.e., {}.".format(*DEFAULT_POSITION),
                type=int, default=DEFAULT_POSITION[0]),
@@ -89,7 +123,18 @@ class GenerateMatchings(Command):
         super(GenerateMatchings, self).__init__()
 
     def run(self, position, size, min_weight, max_weight, solve_it, output_dir):
-        """Generate matchings"""
+        """Generate (random) matchings"""
+        if not (size >= GenerateMatchings.S_MIN and size <= GenerateMatchings.S_MAX):
+            print ("Size should be in the range from {} to {}.".format(
+                GenerateMatchings.S_MIN,
+                GenerateMatchings.S_MAX
+            ))
+            return
+        if not (min_weight < max_weight):
+            print("min_weight should be less than max_weight")
+            return
+
+
         output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
         r = gen_random_matching(size,
                                 min_weight=min_weight,
@@ -104,18 +149,23 @@ class GenerateMatchings(Command):
                                 max_weight=max_weight,
                                 consistent_with=const_matching)
 
-        make_files([[r, "arrival_matching"],
-                    [s, "previous_matching"]],
-                   output_dir)
+        make_files_for_matchings([[r, "arrival_matching"],
+                                  [s, "previous_matching"]],
+                                 output_dir,
+                                 position=position)
 
         if solve_it != 'N':
-            print("Merging ...")
-            M, W = simple_merge(to_tuple(r), to_tuple(s), default={"R": 0, "S": 1}[solve_it])
-            merged = []
-            for i, o in enumerate(M):
-                merged.append(dict(zip(["i", "o", "w"],
-                                       [i, o, W[i]])))
-            make_files([merged, "merged_matching"], output_dir)
+            merged, cycles = solve_merge(r, s, default=solve_it)
+            make_files_for_matchings([[merged, "merged_matching"]],
+                                     output_dir,
+                                     position=position)
+            make_files_for_cycles(cycles,
+                                  output_dir=output_dir)
+
+
+
+
+
 
 
 
@@ -197,21 +247,15 @@ class GenerateMatchingsFromTxt(Command):
         file_path = unicode(file_path.decode(encoding=u'utf-8'))
         output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
         R, S = get(file_path)
-        make_files([[R, "arrival_matching"],
-                    [S, "previous_matching"]],
-                   output_dir)
+        make_files_for_matchings([[R, "arrival_matching"],
+                                  [S, "previous_matching"]],
+                                 output_dir)
 
         if solve_it != 'N':
-            print("Merging ...")
-            # convert
-
-            M, W = simple_merge(to_tuple(R), to_tuple(S), default={"R": 0, "S": 1}[solve_it])
-            merged = []
-            for i, o in enumerate(M):
-                merged.append(dict(zip(["i", "o", "w"],
-                                       [i, o, W[i]])))
-            make_files([merged, "merged_matching"], output_dir)
-
+            merged, cycles = solve_merge(R, S, default=solve_it)
+            make_files_for_matchings([[merged, "merged_matching"]],
+                                     output_dir)
+            make_files_for_cycles(cycles, output_dir=output_dir)
 
 
 class Merge(Command):
@@ -241,12 +285,9 @@ class Merge(Command):
         R = auto_extract_bwm(Rfile)
         S = auto_extract_bwm(Sfile)
 
-        M, W = simple_merge(R, S, default={"R": 0, "S": 1}[default])
-        merged = []
-        for i, o in enumerate(M):
-            merged.append(dict(zip(["i", "o", "w"],
-                                   [i, o, W[i]])))
-        make_files([merged, "merged_matching"], output_dir)
+        merged, cycles = solve_merge(R, S, default=default)
+        make_files_for_matchings([merged, "merged_matching"], output_dir)
+        make_files_for_cycles(cycles, output_dir=output_dir)
 
 
 if __name__ == "__main__":

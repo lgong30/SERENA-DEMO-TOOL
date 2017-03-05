@@ -14,14 +14,23 @@ DEFAULT_COMMAND_WINDOWS_MIKTEX = ["texify", "-b", "-p", "--engine=pdftex",
 DEFAULT_INTERMEDIATE_FILE_EXTS = {'.aux', '.lof', '.log', '.lot', '.fls', '.out', '.toc', '.fdb_latexmk', '.synctex.gz',
                                   '.pdfsync', '.gz'}
 
+
 class PDFBuilder(object):
     """Simple PDF Builder"""
 
     def __init__(self, tex_file_list, **kwargs):
+        """Constructor for PDFBuilder
+
+        Args:
+            tex_file_list:
+            **kwargs:
+        """
         super(PDFBuilder, self).__init__()
         self.tex_file_list = tex_file_list
-        self.tex_dir = kwargs.get('tex_dir', os.getcwd())
-        self.output_dir = kwargs.get('output_dir', os.getcwd())
+        # changed to abspath
+        self.tex_dir = os.path.abspath(kwargs.get('tex_dir', os.getcwd()))
+        # change from cwd() to tex_dir
+        self.output_dir = kwargs.get('output_dir', self.tex_dir)
         self.options = ""
         self.display_all = kwargs.get('display', False)
         self.temp_file_exts = kwargs.get('temp_file_exts', DEFAULT_INTERMEDIATE_FILE_EXTS)

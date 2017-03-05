@@ -1,0 +1,48 @@
+\documentclass[border=1pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning} 
+
+%%%<
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}%
+%%%>
+                             
+\begin{comment}
+:title: Simple cycle
+:author: Long Gong
+
+A template for drawing a cycle. Note that, this template is highly 
+"inspired" by http://www.texample.net/tikz/examples/cycle/
+
+In some ways, this TeX script works as the "model" of our application 
+for visualizing a cycle. 
+
+Programmed in TikZ by Long Gong. Templating language is Jinja2, 
+templaing syntax is the default setting of Jinja2.
+\end{comment}
+
+\begin{document}
+
+\begin{tikzpicture}[
+vertex/.style={circle, thick, inner sep=1pt, minimum size=1.5em, draw=black, fill=none},
+edge/.style={thick},
+edge-start-with-arrow/.style={edge, <-, >=latex'},
+edge-end-with-arrow/.style={edge, ->, >=latex'}
+]
+
+\def\radius{ 2.4em }
+% \def\margin{   } %% in terms of angle
+
+%% draw nodes on the cycle
+\node[vertex] (12) at (0:\radius) {$O_11$}
+\node[vertex] (6) at (180:\radius) {$O_5$}
+
+%% draw edges on the cycle
+\draw[edge,green] (19:\radius) arc (19:161:\radius) node[midway, sloped]{$8$};
+\draw[edge,red] (199:\radius) arc (199:-19:\radius) node[midway, sloped]{$8$};
+
+\end{tikzpicture}
+
+\end{document}
