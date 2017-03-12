@@ -45,7 +45,7 @@ def simple_merge(R, S, default=0, return_cycles=False):
     N = len(R[0])
 
     G = nx.DiGraph()
-    for i in xrange(2*N):
+    for i in range(2*N):
         G.add_node(i)
     for i, o in enumerate(R[0]):
         G.add_edge(i, o + N, weight=R[1][i], color="red")
@@ -110,7 +110,10 @@ def format_cycle(cycle, N, node_size=1.8):
     margin = int(round(np.arcsin(node_size/2/radius) * 180 / np.pi)) #+ {1:1,0:0}[n <= 4]
 
     for edge in cycle:
-        i, j = edge.keys()[0]
+        try:
+            i, j = edge.keys()[0]
+        except:
+            i,j = list(edge.keys())[0]
         for k in [i, j]:
             if not (k in visited):
                 nodes.append(

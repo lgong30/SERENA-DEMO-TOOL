@@ -26,7 +26,7 @@ templaing syntax is the default setting of Jinja2.
 \begin{document}
 
 \begin{tikzpicture}[
-vertex/.style={circle, thick, inner sep=1pt, minimum size={{ node_size }}em, draw=black, fill=none},
+vertex/.style={circle, thick, inner sep=1pt, minimum size={{ node_size }}em, draw=black, fill=white},
 edge/.style={thick},
 edge-start-with-arrow/.style={edge, <-, >=latex'},
 edge-end-with-arrow/.style={edge, ->, >=latex'},
@@ -36,14 +36,19 @@ dummy/.style={draw=none,fill=none,inner sep=1pt}
 \def\radius{{ '{' }} {{ radius }}em {{ '}' }}
 \def\margin{{ '{' }} {{ margin }}  {{ '}' }} %% in terms of angle
 
-%% draw nodes on the cycle
-{% for node in nodes %}
-\node[vertex] ({{ node.identity }}) at ({{ node.position }}:\radius) {{ '{$' }}{{ node.label }}{{ '$}' }};
-{% endfor %}
 
 %% draw edges on the cycle
 {% for edge in edges %}
 \draw[{% if direction == 1%}edge-end-with-arrow{% elif direction == 2 %}edge-start-with-arrow{% else %}edge{% endif %}{% if edge.color %},{{edge.color}}{% endif %}] ({{ edge.start }}:\radius) arc ({{ edge.start }}:{{ edge.end }}:\radius) {% if edge.weight %}node[dummy, pos=0.5, swap, auto]{{'{$'}}{{edge.weight}}{{'$}'}}{% endif %};
+{% endfor %}
+
+%% draw nodes on the cycle
+%% NOTE, here we choose to place nodes after edges, because
+%% we want to "cover" the parts of edges getting inside the
+%% vertices. We are looking for better solutions for fixing
+%% this issue.
+{% for node in nodes %}
+\node[vertex] ({{ node.identity }}) at ({{ node.position }}:\radius) {{ '{$' }}{{ node.label }}{{ '$}' }};
 {% endfor %}
 
 \end{tikzpicture}

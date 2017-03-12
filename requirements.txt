@@ -1,0 +1,6 @@
+numpy
+Flask
+Flask-Script
+Jinja2
+Send2Trash
+networkx

@@ -31,6 +31,7 @@ from auto_cycle import make_tex_doc
 import os
 import sys
 
+
 OVERWRITE_HANDLER = lambda filename: prompt_bool("{} already exists."
                                                  " Do you really want to overwrite it?".format(filename))
 
@@ -91,7 +92,10 @@ class GenerateMatchings(Command):
     S_MIN = 4
     S_MAX = 1024
     W_MIN = 0
-    W_MAX = sys.maxint
+    try:
+        W_MAX = sys.maxint
+    except:
+        W_MAX = sys.maxsize
     option_list = (
         Option(u'--position', u'-p', action="store", dest=u'position',
                choices=range(POSITION_CHOICES),
@@ -135,8 +139,10 @@ class GenerateMatchings(Command):
             print("min_weight should be less than max_weight")
             return
 
-
-        output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
+        try:
+            output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
+        except:
+            pass
         r = gen_random_matching(size,
                                 min_weight=min_weight,
                                 max_weight=max_weight,
@@ -246,8 +252,11 @@ class GenerateMatchingsFromTxt(Command):
                         R.append(dict(zip(['i', 'o', 'w'],
                                           [int(x) for x in [i, o, w]])))
             return R, S
-        file_path = unicode(file_path.decode(encoding=u'utf-8'))
-        output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
+        try:
+            file_path = unicode(file_path.decode(encoding=u'utf-8'))
+            output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
+        except:
+            pass
         R, S = get(file_path)
         make_files_for_matchings([[R, "arrival_matching"],
                                   [S, "previous_matching"]],
