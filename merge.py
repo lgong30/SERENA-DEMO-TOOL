@@ -102,7 +102,8 @@ def format_cycle(cycle, N, node_size=1.8):
     visited = {}
 
     n = len(cycle)
-    GAP = 4
+    # change GAP for big cycle
+    GAP = 4 if N <= 4 else 3
     vi = 0
     radius = int(ceil(10 * (node_size * (GAP + 1) * n) / (2 * np.pi))) / 10.0
     d_gap = 360.0 / n
@@ -123,12 +124,21 @@ def format_cycle(cycle, N, node_size=1.8):
                 visited[k] = vi
                 vi += 1
 
-        start = nodes[visited[i]]['position'] + margin
+        # start = nodes[visited[i]]['position'] + margin
+        # end = nodes[visited[j]]['position'] - margin
+        # edges.append(
+        #     {
+        #         'start': start,
+        #         'end': end if end > 0 else end + 360,
+        #         'weight': edge[(i, j)]['weight'],
+        #         'color': edge[(i,j)]['color']
+        #     }
+        # )
         end = nodes[visited[j]]['position'] - margin
         edges.append(
             {
-                'start': start,
-                'end': end if end > 0 else end + 360,
+                'start': "{%d + \\margin}" % nodes[visited[i]]['position'],
+                'end': "{%d - \\margin}" % ((end if end > 0 else end + 360) + margin),
                 'weight': edge[(i, j)]['weight'],
                 'color': edge[(i,j)]['color']
             }
@@ -139,7 +149,8 @@ def format_cycle(cycle, N, node_size=1.8):
                 'edges': edges
             },
             'node_size': node_size,
-            'radius': radius
+            'radius': radius,
+            'margin': margin
             }
 
 

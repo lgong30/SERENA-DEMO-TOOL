@@ -15,7 +15,7 @@ except ImportError as msg:
 
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_TEMPLATE = u'cycle_template.tex'
+DEFAULT_TEMPLATE = u'cycle_template_flexible.tex'
 
 
 def make_tex_doc(cycle, radius, node_size, **options):

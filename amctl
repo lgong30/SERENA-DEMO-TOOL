@@ -53,12 +53,12 @@ def make_files_for_matchings(matchings, output_dir, **tex_options):
     make_pdf(tex_file_list=tex_file_list, tex_dir=output_dir)
 
 
-def make_files_for_cycles(cycles, output_dir):
+def make_files_for_cycles(cycles, N, output_dir):
     """Writing cycles into files"""
     formatted_cycles = []
     for i, c in enumerate(cycles):
         formatted_cycles.append(
-            [format_cycle(c), "cycle-{}".format(i + 1)]
+            [format_cycle(c, N), "cycle-{}".format(i + 1)]
         )
     tex_builder = CycleTeXBuilder(formatted_cycles, output_dir=output_dir)
     tex_file_list = tex_builder.make_tex(overwrite_handler=OVERWRITE_HANDLER)
@@ -67,6 +67,7 @@ def make_files_for_cycles(cycles, output_dir):
 
 
 def solve_merge(R, S, default):
+    """Merge R and S"""
     print("Merging ...")
     # convert
 
@@ -76,7 +77,7 @@ def solve_merge(R, S, default):
     merged = []
     for i, o in enumerate(M):
         merged.append(dict(zip(["i", "o", "w"],
-                               [i, o, W[i]])))
+                               [i + 1, o + 1, W[i]])))
     # here, the first argument MUST be a 2d list
     return merged, cycles
 
@@ -160,6 +161,7 @@ class GenerateMatchings(Command):
                                      output_dir,
                                      position=position)
             make_files_for_cycles(cycles,
+                                  size,
                                   output_dir=output_dir)
 
 
@@ -255,7 +257,9 @@ class GenerateMatchingsFromTxt(Command):
             merged, cycles = solve_merge(R, S, default=solve_it)
             make_files_for_matchings([[merged, "merged_matching"]],
                                      output_dir)
-            make_files_for_cycles(cycles, output_dir=output_dir)
+            make_files_for_cycles(cycles,
+                                  len(R),
+                                  output_dir=output_dir)
 
 
 class Merge(Command):
@@ -287,7 +291,9 @@ class Merge(Command):
 
         merged, cycles = solve_merge(R, S, default=default)
         make_files_for_matchings([merged, "merged_matching"], output_dir)
-        make_files_for_cycles(cycles, output_dir=output_dir)
+        make_files_for_cycles(cycles,
+                              len(R),
+                              output_dir=output_dir)
 
 
 if __name__ == "__main__":
