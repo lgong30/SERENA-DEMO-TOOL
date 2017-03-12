@@ -35,15 +35,18 @@ edge-end-with-arrow/.style={edge, ->, >=latex'}
 \def\radius{{ '{' }} {{ radius }}em {{ '}' }}
 % \def\margin{{ '{' }} {{ margin }}  {{ '}' }} %% in terms of angle
 
-%% draw nodes on the cycle
-{% for node in nodes %}
-\node[vertex] ({{ node.identity }}) at ({{ node.position }}:\radius) {{ '{$' }}{{ node.label }}{{ '$}' }};
-{% endfor %}
+
 
 %% draw edges on the cycle
 {% for edge in edges %}
 \draw[{% if direction == 1%}edge-end-with-arrow{% elif direction == 2 %}edge-start-with-arrow{% else %}edge{% endif %}{% if edge.color %},{{edge.color}}{% endif %}] ({{ edge.start }}:\radius) arc ({{ edge.start }}:{{ edge.end }}:\radius) {% if edge.weight %}node[midway, auto, sloped]{{'{$'}}{{edge.weight}}{{'$}'}}{% endif %};
 {% endfor %}
+
+%% draw nodes on the cycle
+{% for node in nodes %}
+\node[vertex] ({{ node.identity }}) at ({{ node.position }}:\radius) {{ '{$' }}{{ node.label }}{{ '$}' }};
+{% endfor %}
+
 
 \end{tikzpicture}
 

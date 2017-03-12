@@ -107,7 +107,7 @@ def format_cycle(cycle, N, node_size=1.8):
     vi = 0
     radius = int(ceil(10 * (node_size * (GAP + 1) * n) / (2 * np.pi))) / 10.0
     d_gap = 360.0 / n
-    margin = int(ceil(np.arcsin(node_size/2/radius) * 180 / np.pi)) #+ {1:1,0:0}[n <= 4]
+    margin = int(round(np.arcsin(node_size/2/radius) * 180 / np.pi)) #+ {1:1,0:0}[n <= 4]
 
     for edge in cycle:
         i, j = edge.keys()[0]

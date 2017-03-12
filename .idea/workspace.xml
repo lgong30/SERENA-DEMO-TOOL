@@ -2,40 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8710de00-e1ad-45fd-b1b1-01413ede06dd" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final_test/arrival_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final_test/arrival_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final_test/merged_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final_test/merged_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final_test/previous_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/final_test/previous_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/output3/Makefile" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/output3/arrival_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/output3/arrival_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/output3/example.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/output3/example.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/output3/previous_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/output3/previous_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/outputs/Makefile" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/outputs/arrival_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/outputs/arrival_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/outputs/example.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/outputs/example.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/outputs/previous_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/outputs/previous_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test16/arrival_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test16/arrival_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test16/merged_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test16/merged_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test16/previous_matching.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test16/previous_matching.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/testc/cycle1.tex" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/testc/test2.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/testc/test2.tex" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/autoMatching.iml" afterPath="$PROJECT_DIR$/.idea/autoMatching.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/amctl" afterPath="$PROJECT_DIR$/amctl" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auto_cycle.py" afterPath="$PROJECT_DIR$/auto_cycle.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cycle_template.tex" afterPath="$PROJECT_DIR$/cycle_template.tex" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cycle_template_flexible.tex" afterPath="$PROJECT_DIR$/cycle_template_flexible.tex" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/merge.py" afterPath="$PROJECT_DIR$/merge.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -83,11 +51,11 @@
       <file leaf-file-name="merge.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/merge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1806">
-              <caret line="104" column="30" lean-forward="false" selection-start-line="104" selection-start-column="30" selection-end-line="104" selection-end-column="30" />
+            <state relative-caret-position="462">
+              <caret line="115" column="29" lean-forward="false" selection-start-line="115" selection-start-column="29" selection-end-line="115" selection-end-column="29" />
               <folding>
                 <element signature="e#43#64#0" expanded="true" />
-                <marker date="1489347661867" expanded="true" signature="4896:4955" ph="..." />
+                <marker date="1489349423198" expanded="true" signature="4897:4956" ph="..." />
               </folding>
             </state>
           </provider>
@@ -118,7 +86,7 @@
       <file leaf-file-name="auto_cycle.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/auto_cycle.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
+            <state relative-caret-position="378">
               <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
               <folding>
                 <element signature="e#161#170#0" expanded="true" />
@@ -127,17 +95,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cycle_template.tex" pinned="false" current-in-tab="false">
+      <file leaf-file-name="cycle_template.tex" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cycle_template.tex">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="735">
-              <caret line="49" column="14" lean-forward="false" selection-start-line="49" selection-start-column="14" selection-end-line="49" selection-end-column="14" />
+            <state relative-caret-position="655">
+              <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cycle_template_flexible.tex" pinned="false" current-in-tab="true">
+      <file leaf-file-name="cycle_template_flexible.tex" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cycle_template_flexible.tex">
           <provider selected="true" editor-type-id="LaTeXFileEditor">
             <state />
@@ -171,14 +139,14 @@
         <option value="$PROJECT_DIR$/pdf_builder.py" />
         <option value="$PROJECT_DIR$/auto_matching.py" />
         <option value="$PROJECT_DIR$/auto_base.py" />
-        <option value="$PROJECT_DIR$/cycle_template.tex" />
         <option value="$PROJECT_DIR$/make_cycle.py" />
         <option value="$PROJECT_DIR$/util.py" />
         <option value="$PROJECT_DIR$/tex_builder.py" />
         <option value="$PROJECT_DIR$/amctl" />
-        <option value="$PROJECT_DIR$/merge.py" />
         <option value="$PROJECT_DIR$/auto_cycle.py" />
         <option value="$PROJECT_DIR$/cycle_template_flexible.tex" />
+        <option value="$PROJECT_DIR$/merge.py" />
+        <option value="$PROJECT_DIR$/cycle_template.tex" />
       </list>
     </option>
   </component>
@@ -677,7 +645,7 @@
           <caret line="85" column="0" lean-forward="false" selection-start-line="85" selection-start-column="2" selection-end-line="94" selection-end-column="59" />
           <folding>
             <element signature="e#43#64#0" expanded="true" />
-            <marker date="1489347661867" expanded="true" signature="4896:4955" ph="..." />
+            <marker date="1489349423198" expanded="true" signature="4897:4956" ph="..." />
           </folding>
         </state>
       </provider>
@@ -950,41 +918,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cycle_template.tex">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="735">
-          <caret line="49" column="14" lean-forward="false" selection-start-line="49" selection-start-column="14" selection-end-line="49" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/merge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1806">
-          <caret line="104" column="30" lean-forward="false" selection-start-line="104" selection-start-column="30" selection-end-line="104" selection-end-column="30" />
-          <folding>
-            <element signature="e#43#64#0" expanded="true" />
-            <marker date="1489347661867" expanded="true" signature="4896:4955" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tex_builder.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="816">
           <caret line="148" column="0" lean-forward="false" selection-start-line="148" selection-start-column="0" selection-end-line="148" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auto_cycle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding>
-            <element signature="e#161#170#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1002,6 +941,35 @@
     <entry file="file://$PROJECT_DIR$/cycle_template_flexible.tex">
       <provider selected="true" editor-type-id="LaTeXFileEditor">
         <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_cycle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+          <folding>
+            <element signature="e#161#170#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/merge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="115" column="29" lean-forward="false" selection-start-line="115" selection-start-column="29" selection-end-line="115" selection-end-column="29" />
+          <folding>
+            <element signature="e#43#64#0" expanded="true" />
+            <marker date="1489349423198" expanded="true" signature="4897:4956" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cycle_template.tex">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="655">
+          <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
+          <folding />
+        </state>
       </provider>
     </entry>
   </component>
