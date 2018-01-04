@@ -39,7 +39,7 @@ dummy/.style={draw=none,fill=none,inner sep=1pt}
 
 %% draw edges on the cycle
 {% for edge in edges %}
-\draw[{% if direction == 1%}edge-end-with-arrow{% elif direction == 2 %}edge-start-with-arrow{% else %}edge{% endif %}{% if edge.color %},{{edge.color}}{% endif %}] ({{ edge.start }}:\radius) arc ({{ edge.start }}:{{ edge.end }}:\radius) {% if edge.weight %}node[dummy, pos=0.5, swap, auto]{{'{$'}}{{edge.weight}}{{'$}'}}{% endif %};
+\draw[{% if direction == 1%}edge-end-with-arrow{% elif direction == 2 %}edge-start-with-arrow{% else %}edge{% endif %}{% if edge.color %},{{edge.color}}{% endif %}] ({{ edge.start }}:\radius) arc ({{ edge.start }}:{{ edge.end }}:\radius) {% if edge.weight %}node[dummy, pos=0.5, swap, auto]{{'{\\textcolor{black}{$'}}{{edge.weight}}{{'$}}'}}{% endif %};
 {% endfor %}
 
 %% draw nodes on the cycle

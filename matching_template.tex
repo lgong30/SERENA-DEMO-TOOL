@@ -67,7 +67,8 @@ info/.style={draw=none,fill=none,inner sep=0pt}]
 {% if position == 0 %}
 \node[weight] (W-{{ m.i }}) at ({{ '{' }}-\margin{{ '}' }},{{ '{' }}- ({{ m.i - 1}}) * \vm{{ '}' }}) {{ '{$' }}{{ m.w }}{{ '$}' }};
 {% else %}
-\node[weight] (W-{{ m.i }}) at ({{ '{' }}\hm+\margin{{ '}' }},{{ '{' }}- ({{ m.i - 1}}) * \vm{{ '}' }}) {{ '{$' }}{{ m.w }}{{ '$}' }};
+%% previous version failed to change to place the weight near o instead of i
+\node[weight] (W-{{ m.o }}) at ({{ '{' }}\hm+\margin{{ '}' }},{{ '{' }}- ({{ m.o - 1}}) * \vm{{ '}' }}) {{ '{$' }}{{ m.w }}{{ '$}' }};
 {% endif %}
 {% endfor %}
 

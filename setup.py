@@ -16,14 +16,14 @@ setup(
     version=u'2017.03',
     url='',
     license='',
-    author='longgong',
+    author='Long Gong',
     author_email='long.github@gmail.com',
     description='Automatically demonstrate merge of two matchings',
     long_description=am_description,
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    scripts=[u'amctl'],
+    scripts=[u'serena_demo_ctl'],
     data_files=[
         (u'.', [u'matching_template.tex', u'cycle_template_flexible.tex'])
     ],
