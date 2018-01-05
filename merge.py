@@ -5,7 +5,7 @@ import numpy as np
 from math import ceil
 
 
-def simple_merge(R, S, default=0, return_cycles=False):
+def simple_merge(R, S, default=0, color=('black','black'), return_cycles=False):
     """Simple Merge Algorithm
 
     Parameters
@@ -48,13 +48,15 @@ def simple_merge(R, S, default=0, return_cycles=False):
     for i in range(2*N):
         G.add_node(i)
     for i, o in enumerate(R[0]):
-        G.add_edge(i, o + N, weight=R[1][i], color="red")
+        G.add_edge(i, o + N, weight=R[1][i], color=color[0])
     for i, o in enumerate(S[0]):
-        G.add_edge(o + N, i, weight=S[1][i], color="green")
+        G.add_edge(o + N, i, weight=S[1][i], color=color[1])
 
     cycles = nx.simple_cycles(G)
     merged_matching = [-1] * N
     weights = {}
+    colors = {}
+    simple_choice = 0
 
     all_cycles = []
 
@@ -69,29 +71,34 @@ def simple_merge(R, S, default=0, return_cycles=False):
         for i, j in zip(cycle, cycle[1:] + [cycle[0]]):
             inputs.add(min(i, j))
             weight = G[i][j]["weight"]
-            color = G[i][j]["color"]
+            e_color = G[i][j]["color"]
             each_cycle.append({
-                (i, j): {"weight": weight, "color": color}
+                (i, j): {"weight": weight, "color": e_color}
             })
-            if color == "red":
+            if e_color == color[0]:
                 w += weight
             else:
                 w -= weight
         if w > 0:
             choice = R
+            simple_choice = 0
         elif w < 0:
-            choice = S
+            choice = S 
+            simple_choice = 1
         else:
             choice = R if default == 0 else S
+            simple_choice = default
     
         for i in inputs:
             merged_matching[i] = choice[0][i]
             weights[i] = choice[1][i]
+            colors[i] = color[simple_choice]
+            
         all_cycles.append(each_cycle)
 
     if return_cycles:
-        return merged_matching, weights, all_cycles
-    return merged_matching, weights
+        return merged_matching, weights, colors, all_cycles
+    return merged_matching, weights, colors
 
 
 def format_cycle(cycle, N, node_size=1.8):

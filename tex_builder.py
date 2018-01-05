@@ -36,7 +36,7 @@ class MatchingTeXBuilder(TexBuilderBase):
                            there are two elements: the first describes
                            the edges and weights in the matchings in terms of
                            a dict with keys 'i' (in), 'o' (out), 'w' (weight),
-                           the second gives name for matching.
+                           the second gives name for matching. TODO
             output_dir: str, where to store the resulted TeX files
             TeX_template: str, list of str or None, where is the template files, if
                           no template is provided, the default one will be used. If

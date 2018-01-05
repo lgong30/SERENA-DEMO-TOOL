@@ -67,18 +67,19 @@ def make_files_for_cycles(cycles, N, output_dir):
     make_pdf(tex_file_list=tex_file_list, tex_dir=output_dir)
 
 
-def solve_merge(R, S, default):
+def solve_merge(R, S, default, color=('black','black')):
     """Merge R and S"""
     print("Merging ...")
     # convert
 
-    M, W, cycles = simple_merge(to_tuple(R), to_tuple(S),
+    M, W, C, cycles = simple_merge(to_tuple(R), to_tuple(S),
                         default={"R": 0, "S": 1}[default],
+                        color=color,
                         return_cycles=True)
     merged = []
     for i, o in enumerate(M):
-        merged.append(dict(zip(["i", "o", "w"],
-                               [i + 1, o + 1, W[i]])))
+        merged.append(dict(zip(["i", "o", "w", "c"],
+                               [i + 1, o + 1, W[i], C[i]])))
     # here, the first argument MUST be a 2d list
     return merged, cycles
 
@@ -120,6 +121,12 @@ class GenerateMatchings(Command):
             u"Default: N.",
             default=u'N', choices=['N', 'R', 'S']),
         Option(
+            u"--Color-RS", u"-C", action="store", dest=u"colors",
+            help=u"OPTIONAL: Color the two matchings\n"
+            u"\tfor example, --Color-RS=red,green means coloring the arrival matching red, and the other one green\n"
+            u"Default: black,black.",
+            default=u'black,black'),
+        Option(
             u"--output-dir", u"-o", action="store", dest=u"output_dir",
             help=u"Output directory", type=str, required=True)
     )
@@ -127,7 +134,7 @@ class GenerateMatchings(Command):
     def __init__(self):
         super(GenerateMatchings, self).__init__()
 
-    def run(self, position, size, min_weight, max_weight, solve_it, output_dir):
+    def run(self, position, size, min_weight, max_weight, solve_it, colors, output_dir):
         """Generate (random) matchings"""
         if not (size >= GenerateMatchings.S_MIN and size <= GenerateMatchings.S_MAX):
             print ("Size should be in the range from {} to {}.".format(
@@ -138,6 +145,15 @@ class GenerateMatchings(Command):
         if not (min_weight < max_weight):
             print("min_weight should be less than max_weight")
             return
+        
+        try:
+            rc, sc = colors.split(',')
+            rc = rc.strip()
+            sc = sc.strip()
+        except:
+            print("--Color-RS is not correct")
+            return
+
 
         try:
             output_dir = unicode(output_dir.decode(encoding=u'utf-8'))
@@ -147,6 +163,9 @@ class GenerateMatchings(Command):
                                 min_weight=min_weight,
                                 max_weight=max_weight,
                                 consistent_with=None)
+        for e in r:
+            e['c'] = rc 
+
         const_matching = {}
         for edge in r:
             const_matching[(str(edge['i']), str(edge['o']))] = edge['w']
@@ -155,6 +174,10 @@ class GenerateMatchings(Command):
                                 min_weight=min_weight,
                                 max_weight=max_weight,
                                 consistent_with=const_matching)
+        
+        for e in s:
+            e['c'] = sc
+
 
         make_files_for_matchings([[r, "arrival_matching"],
                                   [s, "previous_matching"]],
@@ -162,7 +185,7 @@ class GenerateMatchings(Command):
                                  position=position)
 
         if solve_it != 'N':
-            merged, cycles = solve_merge(r, s, default=solve_it)
+            merged, cycles = solve_merge(r, s, default=solve_it, color=(rc, sc))
             make_files_for_matchings([[merged, "merged_matching"]],
                                      output_dir,
                                      position=position)
